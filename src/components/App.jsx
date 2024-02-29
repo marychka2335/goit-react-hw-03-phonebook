@@ -7,10 +7,24 @@ import { ContactsList } from './ContactsList/ContactsList';
 import { Filter } from './Filter/Filter';
 
 export class App extends Component {
+  #LS_CONTACTS_KEY = 'contacts';
   state = {
     contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(this.#LS_CONTACTS_KEY);
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts.length !== prevState.contacts.length) {
+      localStorage.setItem(this.#LS_CONTACTS_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
 
   handleAddContact = contact => {
     if (this.state.contacts.some(item => item.name.toLowerCase() === contact.name.toLowerCase())) {
